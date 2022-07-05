@@ -7,7 +7,7 @@ import useDirectoryState, {
 
 const renderPanelElem = (
   dirElem: EnhancedFileEntry,
-  toggleOpen: (name?: string) => Promise<void>
+  toggleOpen: (folderPath: string) => Promise<void>
 ) => {
   const isDir = !!dirElem.children;
 
@@ -45,7 +45,6 @@ const Sidenav = () => {
   const dirSplit = currentDir?.split("/");
   const dirTitle = dirSplit?.[dirSplit.length - 1];
 
-  console.log(dirState, currentDirFiles);
   return (
     <SidePanel title={dirTitle}>
       <SidePanel.List>

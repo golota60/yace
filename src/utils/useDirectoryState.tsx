@@ -1,30 +1,35 @@
 import { fs } from "@tauri-apps/api";
 import { useEffect, useState } from "react";
 
-const findFolderRecursive = (
+const findFileRecursive = (
   currFolder: EnhancedFileEntry,
   folderPath: string
-): EnhancedFileEntry | null => {
-  // search in initial child layer
-  // if found return;
-  // if not found, search in parent folder(how?)
-  console.log(currFolder.path, folderPath);
+): boolean => {
+  // If this is the file, return it
   if (currFolder.path === folderPath) {
-    return currFolder;
+    console.log("findFileRecursive", currFolder.path, folderPath);
+    return true;
   }
-  if (!currFolder.children || currFolder.children.length === 0) return null;
-  const folder: EnhancedFileEntry | undefined = currFolder.children?.find(
-    (childFileEntry) => findFolderRecursive(childFileEntry, folderPath)
+
+  // If current folder doesn't have children return false, as it is imposible that this is the one
+  if (!currFolder.children || currFolder.children.length === 0) return false;
+
+  // is this even needed?? this should never file i think
+  const folder = currFolder.children?.find((childFileEntry) =>
+    findFileRecursive(childFileEntry, folderPath)
   );
-  if (folder) return folder;
-  return null;
+  if (folder) return true;
+  return false;
 };
 
 export interface EnhancedFileEntry extends fs.FileEntry {
   open?: boolean;
 }
 
-/** Hook that enhances directory state */
+/**
+ * Hook that enhances directory state
+ * Folders are files with `children: Array<EnhancedFileEntry> || []`.
+ */
 const useDirectoryState = (initialState?: Array<EnhancedFileEntry>) => {
   const [dirState, setDirState] = useState(initialState || []);
 
@@ -32,14 +37,10 @@ const useDirectoryState = (initialState?: Array<EnhancedFileEntry>) => {
     if (initialState) setDirState(initialState);
   }, [initialState]);
 
-  const getFolder = (folderPath: string) => {
-    const folder: EnhancedFileEntry | null = dirState.reduce(
-      (acc, elem) => findFolderRecursive(elem, folderPath) as any,
-      null
-    );
+  const getFile = (folderPath: string) => {
+    const folder = dirState.find((elem) => findFileRecursive(elem, folderPath));
     console.log({ foundFolder: folder });
     if (!folder) {
-      console.log(dirState);
       console.error(`Didn't find a folder with path: ${folderPath}`);
       return;
     }
@@ -59,12 +60,8 @@ const useDirectoryState = (initialState?: Array<EnhancedFileEntry>) => {
     setDirState(replaced);
   };
 
-  const toggleFolderOpen = async (folderPath?: string) => {
-    if (!folderPath) {
-      console.error("Cannot open a folder without a path");
-      return;
-    }
-    const folder = getFolder(folderPath);
+  const toggleFolderOpen = async (folderPath: string) => {
+    const folder = getFile(folderPath);
     if (!folder) {
       console.error(
         `Cannot open a folder; Didn't find a folder with path: ${folderPath}`
@@ -72,7 +69,9 @@ const useDirectoryState = (initialState?: Array<EnhancedFileEntry>) => {
       return;
     }
     const nextOpenState = !folder.open;
-
+    console.log("toggling folder", { folderPath, folder, nextOpenState });
+    // when you open a directory, fill it's children
+    // should children be removed when closing? open ended question - currently yes cause i don't wanna think about it
     const filesInDirRaw = nextOpenState ? await fs.readDir(folder.path) : [];
     setFolderState(folderPath, {
       ...folder,
@@ -81,7 +80,7 @@ const useDirectoryState = (initialState?: Array<EnhancedFileEntry>) => {
     });
   };
 
-  return [dirState, { getFolder, toggleFolderOpen, setFolderState }] as const;
+  return [dirState, { getFile, toggleFolderOpen, setFolderState }] as const;
 };
 
 export default useDirectoryState;
