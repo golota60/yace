@@ -1,6 +1,41 @@
 import { fs } from "@tauri-apps/api";
 import { useEffect, useState } from "react";
 
+// To be used inside a `map`
+const openFileRecursive = async (
+  currFolder: EnhancedFileEntry,
+  folderPath: string,
+  updater: (
+    newFolder: EnhancedFileEntry
+  ) => EnhancedFileEntry | Promise<EnhancedFileEntry>
+) => {
+  // If this is the file, update and return it
+  if (currFolder.path === folderPath) {
+    console.log("findFileRecursive", currFolder.path, folderPath);
+    const newFolderState = await updater(currFolder);
+    return newFolderState;
+  }
+
+  // If current folder doesn't have children just return it
+  if (!currFolder.children || currFolder.children.length === 0)
+    return currFolder;
+
+  const newChildren = await Promise.all(
+    currFolder.children?.map(
+      async (childFileEntry) =>
+        await openFileRecursive(childFileEntry, folderPath, updater)
+    )
+  );
+  // map recursively through children if exist and update them
+  console.log({ newChildren });
+  const folder = {
+    ...currFolder,
+    children: newChildren,
+  } as EnhancedFileEntry;
+  return folder;
+};
+
+// To be used inside a `find`
 const findFileRecursive = (
   currFolder: EnhancedFileEntry,
   folderPath: string
@@ -47,40 +82,31 @@ const useDirectoryState = (initialState?: Array<EnhancedFileEntry>) => {
     return folder;
   };
 
-  const setFolderState = (
-    folderPath: string,
-    newFolderState: EnhancedFileEntry
-  ) => {
-    const replaced = dirState.map((dir) => {
-      if (dir.path === folderPath) {
-        return newFolderState;
-      }
-      return dir;
-    });
-    setDirState(replaced);
-  };
-
   const toggleFolderOpen = async (folderPath: string) => {
-    const folder = getFile(folderPath);
-    if (!folder) {
-      console.error(
-        `Cannot open a folder; Didn't find a folder with path: ${folderPath}`
-      );
-      return;
-    }
-    const nextOpenState = !folder.open;
-    console.log("toggling folder", { folderPath, folder, nextOpenState });
     // when you open a directory, fill it's children
     // should children be removed when closing? open ended question - currently yes cause i don't wanna think about it
-    const filesInDirRaw = nextOpenState ? await fs.readDir(folder.path) : [];
-    setFolderState(folderPath, {
-      ...folder,
-      children: filesInDirRaw,
-      open: nextOpenState,
-    });
+    const newState = await Promise.all(
+      dirState.map((currFile) =>
+        openFileRecursive(currFile, folderPath, async (folderToUpdate) => {
+          const newChildren = await fs.readDir(folderToUpdate.path);
+          const updatedFile = {
+            ...folderToUpdate,
+            children: !folderToUpdate.open ? newChildren : [],
+            open: !folderToUpdate.open,
+          };
+          console.log("updating", {
+            folderToUpdate,
+            newChildren,
+            updatedFile,
+          });
+          return updatedFile;
+        })
+      )
+    );
+    setDirState(newState);
   };
 
-  return [dirState, { getFile, toggleFolderOpen, setFolderState }] as const;
+  return [dirState, { getFile, toggleFolderOpen }] as const;
 };
 
 export default useDirectoryState;
