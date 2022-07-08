@@ -19,7 +19,15 @@ const SidePanelElem = ({
     <li className={clsx("cursor-pointer", className)} {...props}>
       <a className="p-0 flex w-full text-xs">
         {isDir ? (
-          <span className="ml-0 pl-0 w-4">
+          <span
+            className={clsx(
+              "ml-0 pl-0 w-4",
+              css`
+                position: absolute;
+                top: 0px;
+              `
+            )}
+          >
             <ChevronRight
               width={14}
               className={clsx(

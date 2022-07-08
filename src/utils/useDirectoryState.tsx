@@ -20,14 +20,13 @@ const openFileRecursive = async (
   if (!currFolder.children || currFolder.children.length === 0)
     return currFolder;
 
+  // map recursively through children if exist and update them
   const newChildren = await Promise.all(
     currFolder.children?.map(
       async (childFileEntry) =>
         await openFileRecursive(childFileEntry, folderPath, updater)
     )
   );
-  // map recursively through children if exist and update them
-  console.log({ newChildren });
   const folder = {
     ...currFolder,
     children: newChildren,

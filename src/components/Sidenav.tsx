@@ -17,7 +17,6 @@ const renderPanelElem = (
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        console.log(`opening ${dirElem.path}`);
         toggleOpen(dirElem.path);
       }}
       isOpen={dirElem.open}
