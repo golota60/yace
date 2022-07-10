@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { SyntheticEvent, useState } from "react";
 import SidePanel from "../generic/SidePanel";
 import { useCurrentDirectory, useCurrentDirectoryFiles } from "../queryHooks";
 import useDirectoryState, {
@@ -11,28 +11,36 @@ const renderPanelElem = (
 ) => {
   const isDir = !!dirElem.children;
 
+  const clickHandler = (e: SyntheticEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleOpen(dirElem.path);
+  };
+
+  // <SidePanel.Item
+  //   isDir={isDir}
+  //   onClick={(e) => {
+  //     e.preventDefault();
+  //     e.stopPropagation();
+  //     toggleOpen(dirElem.path);
+  //   }}
+  //   isOpen={dirElem.open}
+  // >
+  // </SidePanel.Item>
   return (
-    <SidePanel.Item
-      isDir={isDir}
-      onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleOpen(dirElem.path);
-      }}
-      isOpen={dirElem.open}
-    >
-      {isDir && dirElem.open ? (
-        <SidePanel.List>
-          <SidePanel.Item>{dirElem.name}</SidePanel.Item>
-          {dirElem.children?.length !== 0 &&
-            dirElem.children?.map((nestedDirElem) =>
-              renderPanelElem(nestedDirElem, toggleOpen)
-            )}
-        </SidePanel.List>
-      ) : (
-        <SidePanel.Item>{dirElem.name}</SidePanel.Item>
-      )}
-    </SidePanel.Item>
+    <>
+      <SidePanel.Item
+        isDir={isDir}
+        onClick={clickHandler}
+        isOpen={dirElem.open}
+      >
+        {dirElem.name}
+      </SidePanel.Item>
+      {dirElem.children?.length !== 0 &&
+        dirElem.children?.map((nestedDirElem) =>
+          renderPanelElem(nestedDirElem, toggleOpen)
+        )}
+    </>
   );
 };
 
@@ -44,15 +52,12 @@ const Sidenav = () => {
   const dirSplit = currentDir?.split("/");
   const dirTitle = dirSplit?.[dirSplit.length - 1];
 
+  console.log({ dirState });
   return (
     <SidePanel title={dirTitle}>
-      <SidePanel.List>
-        {dirState.length !== 0
-          ? dirState.map((dirElem) =>
-              renderPanelElem(dirElem, toggleFolderOpen)
-            )
-          : "No directory currently open"}
-      </SidePanel.List>
+      {dirState.length !== 0
+        ? dirState.map((dirElem) => renderPanelElem(dirElem, toggleFolderOpen))
+        : "No directory currently open"}
     </SidePanel>
   );
 };

@@ -8,53 +8,39 @@ interface SidePanelElemProps extends React.HTMLAttributes<HTMLElement> {
   isOpen?: boolean;
 }
 
-const SidePanelElem = ({
+const SidePanelItem = ({
   className,
   children,
   isDir,
   isOpen,
   ...props
 }: SidePanelElemProps) => {
+  //className="p-0 flex w-full text-xs flex-col items-start"
+  const elemContent = (
+    <>
+      {isDir ? (
+        <span className={clsx("ml-0 pl-0 top-0")}>
+          <ChevronRight
+            width={14}
+            className={clsx(
+              "flex content-center items-center transition-transform pl-1",
+              isOpen &&
+                css`
+                  transform: rotate(90deg) translate(-2px, -2px);
+                `
+            )}
+          />
+        </span>
+      ) : (
+        <span className="ml-3"></span>
+      )}
+      <span>{children}</span>
+    </>
+  );
   return (
     <li className={clsx("cursor-pointer", className)} {...props}>
-      <a className="p-0 flex w-full text-xs">
-        {isDir ? (
-          <span
-            className={clsx(
-              "ml-0 pl-0 w-4",
-              css`
-                position: absolute;
-                top: 0px;
-              `
-            )}
-          >
-            <ChevronRight
-              width={14}
-              className={clsx(
-                "flex content-center items-center transition-transform pl-1",
-                isOpen &&
-                  css`
-                    transform: rotate(90deg) translate(-2px, -2px);
-                  `
-              )}
-            />
-          </span>
-        ) : (
-          <span className="ml-3"></span>
-        )}
-        {children}
-      </a>
+      <a className="w-full text-xs flex flex-row py-0">{elemContent}</a>
     </li>
-  );
-};
-
-interface SidePanelList extends React.HTMLAttributes<HTMLUListElement> {}
-
-const SidePanelList = ({ className, children, ...props }: SidePanelList) => {
-  return (
-    <ul className={clsx("", className)} {...props}>
-      {children}
-    </ul>
   );
 };
 
@@ -74,7 +60,6 @@ function SidePanel({ className, children, title, ...props }: SidePanelProps) {
   );
 }
 
-SidePanel.Item = SidePanelElem;
-SidePanel.List = SidePanelList;
+SidePanel.Item = SidePanelItem;
 
 export default SidePanel;
