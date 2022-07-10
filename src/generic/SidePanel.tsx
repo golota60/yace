@@ -15,7 +15,6 @@ const SidePanelItem = ({
   isOpen,
   ...props
 }: SidePanelElemProps) => {
-  //className="p-0 flex w-full text-xs flex-col items-start"
   const elemContent = (
     <>
       {isDir ? (

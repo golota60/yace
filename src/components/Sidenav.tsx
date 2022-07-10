@@ -1,3 +1,4 @@
+import { css } from "@emotion/css";
 import React, { SyntheticEvent, useState } from "react";
 import SidePanel from "../generic/SidePanel";
 import { useCurrentDirectory, useCurrentDirectoryFiles } from "../queryHooks";
@@ -7,8 +8,9 @@ import useDirectoryState, {
 
 const renderPanelElem = (
   dirElem: EnhancedFileEntry,
-  toggleOpen: (folderPath: string) => Promise<void>
-) => {
+  toggleOpen: (folderPath: string) => Promise<void>,
+  indentLevel = 0
+): React.ReactElement => {
   const isDir = !!dirElem.children;
 
   const clickHandler = (e: SyntheticEvent) => {
@@ -17,28 +19,21 @@ const renderPanelElem = (
     toggleOpen(dirElem.path);
   };
 
-  // <SidePanel.Item
-  //   isDir={isDir}
-  //   onClick={(e) => {
-  //     e.preventDefault();
-  //     e.stopPropagation();
-  //     toggleOpen(dirElem.path);
-  //   }}
-  //   isOpen={dirElem.open}
-  // >
-  // </SidePanel.Item>
   return (
     <>
       <SidePanel.Item
         isDir={isDir}
         onClick={clickHandler}
         isOpen={dirElem.open}
+        className={css`
+          padding-left: ${indentLevel}rem;
+        `}
       >
         {dirElem.name}
       </SidePanel.Item>
       {dirElem.children?.length !== 0 &&
         dirElem.children?.map((nestedDirElem) =>
-          renderPanelElem(nestedDirElem, toggleOpen)
+          renderPanelElem(nestedDirElem, toggleOpen, indentLevel + 1)
         )}
     </>
   );
