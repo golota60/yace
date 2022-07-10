@@ -34,13 +34,13 @@ const openFileRecursive = async (
 };
 
 // To be used inside a `find`
+// aaand doesn't work - also it should be converted and used inside reduce cause otherwise you cant return nested folder
 const findFileRecursive = (
   currFolder: EnhancedFileEntry,
   folderPath: string
 ): boolean => {
   // If this is the file, return it
   if (currFolder.path === folderPath) {
-    console.log("findFileRecursive", currFolder.path, folderPath);
     return true;
   }
 
@@ -72,7 +72,6 @@ const useDirectoryState = (initialState?: Array<EnhancedFileEntry>) => {
 
   const getFile = (filePath: string) => {
     const folder = dirState.find((elem) => findFileRecursive(elem, filePath));
-    console.log({ foundFolder: folder });
     if (!folder) {
       console.error(`Didn't find a folder with path: ${filePath}`);
       return;

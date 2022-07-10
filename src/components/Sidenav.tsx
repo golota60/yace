@@ -51,20 +51,14 @@ const Sidenav = () => {
 
   const { data: currentDirFiles } = useCurrentDirectoryFiles();
   const { data: currentDir } = useCurrentDirectory();
-  const [dirState, { toggleFolderOpen, getFile }] =
-    useDirectoryState(currentDirFiles);
+  const [dirState, { toggleFolderOpen }] = useDirectoryState(currentDirFiles);
 
   const handleOpenFileEditor = async (filePath: string) => {
-    const foundFile = getFile(filePath);
-    const isDir = isFolder(foundFile);
-    console.log({ foundFile, isDir });
-
     toggleFolderOpen(filePath);
 
     // logic to open file
 
     const readFile = await fs.readTextFile(filePath);
-    console.log({ readFile });
     if (readFile) {
       queryClient.setQueryData(QueryKeys.OpenFile, () => {
         return { contents: readFile, path: filePath };

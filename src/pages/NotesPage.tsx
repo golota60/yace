@@ -25,7 +25,6 @@ const NotesPage = () => {
       () => filesInDirRaw
     );
   };
-  console.log({ openDirPath, openDirFiles, openedFile }, "asdfasdfadsf");
   return (
     <div className="flex flex-col justify-center items-center">
       {openDirPath ? (
