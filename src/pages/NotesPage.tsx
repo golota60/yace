@@ -1,13 +1,11 @@
 import { fs } from "@tauri-apps/api";
 import { open } from "@tauri-apps/api/dialog";
-import { BaseDirectory, readDir } from "@tauri-apps/api/fs";
 import clsx from "clsx";
 import React from "react";
 import MonacoEditor from "react-monaco-editor";
-import { useQuery, useQueryClient } from "react-query";
+import { useQueryClient } from "react-query";
 import Button from "../generic/Button";
-import Layout from "../generic/Layout";
-import { OpenedFile, QueryKeys, useOpenedFile } from "../queryHooks";
+import { QueryKeys, useOpenedFile } from "../queryHooks";
 
 const NotesPage = () => {
   const queryClient = useQueryClient();

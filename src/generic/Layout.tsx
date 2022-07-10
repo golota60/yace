@@ -31,6 +31,7 @@ const Block = React.forwardRef(
   ({ className, ...props }: GenericProps, ref: React.Ref<HTMLDivElement>) => {
     return (
       <div
+        ref={ref}
         className={clsx(
           css`
             display: block;
@@ -50,6 +51,7 @@ const Flex = React.forwardRef(
   ({ className, ...props }: GenericProps, ref: React.Ref<HTMLDivElement>) => {
     return (
       <div
+        ref={ref}
         className={clsx(
           css`
             display: flex;

@@ -1,11 +1,8 @@
-import { lazy, useState } from "react";
-import Layout from "./generic/Layout";
-import Sidenav from "./components/Sidenav";
-import NotesPage from "./pages/NotesPage";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import PageWithSidenav from "./generic/PageWithSidenav";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { css } from "@emotion/css";
+import PageWithSidenav from "./generic/PageWithSidenav";
+import NotesPage from "./pages/NotesPage";
 
 function App() {
   const queryClient = new QueryClient();

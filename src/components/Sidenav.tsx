@@ -1,6 +1,6 @@
 import { css } from "@emotion/css";
 import { fs } from "@tauri-apps/api";
-import React, { SyntheticEvent, useState } from "react";
+import React, { SyntheticEvent } from "react";
 import { useQueryClient } from "react-query";
 import SidePanel from "../generic/SidePanel";
 import {
@@ -52,7 +52,6 @@ const Sidenav = () => {
 
   const { data: currentDirFiles } = useCurrentDirectoryFiles();
   const { data: currentDir } = useCurrentDirectory();
-  const { data: openedFile } = useOpenedFile();
   const [dirState, { toggleFolderOpen, getFile }] =
     useDirectoryState(currentDirFiles);
 

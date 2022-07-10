@@ -1,0 +1,19 @@
+{
+  "extends": ["@callstack/eslint-config/react", "plugin:import/typescript"],
+  "plugins": ["import"],
+  "rules": {
+    // turn on errors for missing imports
+    "import/no-unresolved": "error",
+    "react/react-in-jsx-scope": "off"
+  },
+  "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true
+      }
+    }
+  }
+}

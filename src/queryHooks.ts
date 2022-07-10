@@ -1,5 +1,5 @@
 import { fs } from "@tauri-apps/api";
-import { Query, QueryKey, useQuery, UseQueryOptions } from "react-query";
+import { QueryKey, useQuery, UseQueryOptions } from "react-query";
 
 type Setter<T> =
   | Omit<UseQueryOptions<T, unknown, T, QueryKey>, "queryKey">
