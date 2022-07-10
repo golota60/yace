@@ -7,7 +7,6 @@ import {
   QueryKeys,
   useCurrentDirectory,
   useCurrentDirectoryFiles,
-  useOpenedFile,
 } from "../queryHooks";
 import useDirectoryState, {
   EnhancedFileEntry,
