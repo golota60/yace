@@ -1,1 +1,2 @@
 - Move away from recursion - it's too slow for operations on directory
+- add icons to all files + special icons for special names

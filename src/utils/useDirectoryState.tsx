@@ -11,7 +11,6 @@ const openFileRecursive = async (
 ) => {
   // If this is the file, update and return it
   if (currFolder.path === folderPath) {
-    console.log("findFileRecursive", currFolder.path, folderPath);
     const newFolderState = await updater(currFolder);
     return newFolderState;
   }
@@ -49,10 +48,10 @@ const findFileRecursive = (
   if (!currFolder.children || currFolder.children.length === 0) return false;
 
   // is this even needed?? this should never file i think
-  const folder = currFolder.children?.find((childFileEntry) =>
+  const file = currFolder.children?.find((childFileEntry) =>
     findFileRecursive(childFileEntry, folderPath)
   );
-  if (folder) return true;
+  if (file) return true;
   return false;
 };
 
@@ -71,11 +70,11 @@ const useDirectoryState = (initialState?: Array<EnhancedFileEntry>) => {
     if (initialState) setDirState(initialState);
   }, [initialState]);
 
-  const getFile = (folderPath: string) => {
-    const folder = dirState.find((elem) => findFileRecursive(elem, folderPath));
+  const getFile = (filePath: string) => {
+    const folder = dirState.find((elem) => findFileRecursive(elem, filePath));
     console.log({ foundFolder: folder });
     if (!folder) {
-      console.error(`Didn't find a folder with path: ${folderPath}`);
+      console.error(`Didn't find a folder with path: ${filePath}`);
       return;
     }
     return folder;
@@ -93,11 +92,6 @@ const useDirectoryState = (initialState?: Array<EnhancedFileEntry>) => {
             children: !folderToUpdate.open ? newChildren : [],
             open: !folderToUpdate.open,
           };
-          console.log("updating", {
-            folderToUpdate,
-            newChildren,
-            updatedFile,
-          });
           return updatedFile;
         })
       )
@@ -107,5 +101,7 @@ const useDirectoryState = (initialState?: Array<EnhancedFileEntry>) => {
 
   return [dirState, { getFile, toggleFolderOpen }] as const;
 };
+
+export const isFolder = (file?: fs.FileEntry) => !!file?.children;
 
 export default useDirectoryState;

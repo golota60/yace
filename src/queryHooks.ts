@@ -8,6 +8,12 @@ type Setter<T> =
 export enum QueryKeys {
   CurrentDirectory = "CurrentDirectory",
   CurrentDirectoryFiles = "CurrentDirectoryFiles",
+  OpenFile = "OpenFile",
+}
+
+export interface OpenedFile {
+  contents: string;
+  path: string;
 }
 
 const queryHooks = {
@@ -15,6 +21,9 @@ const queryHooks = {
     useQuery<string>(QueryKeys.CurrentDirectory, setter),
   useCurrentDirectoryFiles: (setter?: Setter<Array<fs.FileEntry>>) =>
     useQuery<Array<fs.FileEntry>>(QueryKeys.CurrentDirectoryFiles, setter),
+  useOpenedFile: (setter?: Setter<OpenedFile>) =>
+    useQuery<OpenedFile>(QueryKeys.OpenFile, setter),
 };
 
-export const { useCurrentDirectory, useCurrentDirectoryFiles } = queryHooks;
+export const { useCurrentDirectory, useCurrentDirectoryFiles, useOpenedFile } =
+  queryHooks;
