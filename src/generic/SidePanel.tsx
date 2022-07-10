@@ -6,39 +6,40 @@ import { ReactComponent as ChevronRight } from "./icons/chevron-right.svg";
 interface SidePanelElemProps extends React.HTMLAttributes<HTMLElement> {
   isDir?: boolean;
   isOpen?: boolean;
+  linkClassName?: string;
 }
 
 const SidePanelItem = ({
   className,
+  linkClassName,
   children,
   isDir,
   isOpen,
   ...props
 }: SidePanelElemProps) => {
-  const elemContent = (
-    <>
-      {isDir ? (
-        <span className={clsx("ml-0 pl-0 top-0")}>
-          <ChevronRight
-            width={14}
-            className={clsx(
-              "flex content-center items-center transition-transform pl-1",
-              isOpen &&
-                css`
-                  transform: rotate(90deg) translate(-2px, -2px);
-                `
-            )}
-          />
-        </span>
-      ) : (
-        <span className="ml-3"></span>
-      )}
-      <span>{children}</span>
-    </>
-  );
   return (
     <li className={clsx("cursor-pointer", className)} {...props}>
-      <a className="w-full text-xs flex flex-row py-0">{elemContent}</a>
+      <a className={clsx("w-full text-xs flex flex-row py-0.5", linkClassName)}>
+        <>
+          {isDir ? (
+            <span className={clsx("ml-0 pl-0 top-0")}>
+              <ChevronRight
+                width={14}
+                className={clsx(
+                  "flex content-center items-center transition-transform pl-1",
+                  isOpen &&
+                    css`
+                      transform: rotate(90deg) translate(-2px, -2px);
+                    `
+                )}
+              />
+            </span>
+          ) : (
+            <span className="ml-3"></span>
+          )}
+          <span className="truncate">{children}</span>
+        </>
+      </a>
     </li>
   );
 };

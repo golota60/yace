@@ -25,7 +25,7 @@ const renderPanelElem = (
         isDir={isDir}
         onClick={clickHandler}
         isOpen={dirElem.open}
-        className={css`
+        linkClassName={css`
           padding-left: ${indentLevel}rem;
         `}
       >
