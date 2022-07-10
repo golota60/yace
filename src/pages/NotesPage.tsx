@@ -3,34 +3,29 @@ import { open } from "@tauri-apps/api/dialog";
 import clsx from "clsx";
 import React from "react";
 import MonacoEditor from "react-monaco-editor";
-import { useQueryClient } from "react-query";
 import Button from "../generic/Button";
-import { QueryKeys, useOpenedFile } from "../queryHooks";
+import { useStore } from "../store";
 
 const NotesPage = () => {
-  const queryClient = useQueryClient();
+  const workingDirPath = useStore((store) => store.workingDirPath);
+  // const workingDirFiles = useStore((store) => store.workingDirFiles);
+  const setWorkingDirPath = useStore((store) => store.setWorkingDirPath);
+  const setWorkingDirFiles = useStore((store) => store.setWorkingDirFiles);
 
-  const openDirPath = queryClient.getQueryData(QueryKeys.CurrentDirectory);
-  const openDirFiles = queryClient.getQueryData(
-    QueryKeys.CurrentDirectoryFiles
-  );
-  const openedFile = useOpenedFile();
+  const openedFile = useStore((store) => store.openedFile);
 
   const handleOpenDir = async () => {
     const filePath = (await open({ directory: true })) as string;
     const filesInDirRaw = await fs.readDir(filePath);
-    queryClient.setQueryData(QueryKeys.CurrentDirectory, () => filePath);
-    queryClient.setQueryData(
-      QueryKeys.CurrentDirectoryFiles,
-      () => filesInDirRaw
-    );
+    setWorkingDirPath(filePath);
+    setWorkingDirFiles(filesInDirRaw);
   };
   return (
     <div className="flex flex-col justify-center items-center">
-      {openDirPath ? (
+      {workingDirPath ? (
         openedFile ? (
           <MonacoEditor
-            value={openedFile.data?.contents}
+            value={openedFile?.contents}
             language="typescript"
             theme="vs-dark"
             className={clsx("w-full h-full")}

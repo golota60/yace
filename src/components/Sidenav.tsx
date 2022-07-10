@@ -1,13 +1,8 @@
 import { css } from "@emotion/css";
 import { fs } from "@tauri-apps/api";
 import React, { SyntheticEvent } from "react";
-import { useQueryClient } from "react-query";
 import SidePanel from "../generic/SidePanel";
-import {
-  QueryKeys,
-  useCurrentDirectory,
-  useCurrentDirectoryFiles,
-} from "../queryHooks";
+import { useStore } from "../store";
 import useDirectoryState, {
   EnhancedFileEntry,
   isFolder,
@@ -47,11 +42,11 @@ const renderPanelElem = (
 };
 
 const Sidenav = () => {
-  const queryClient = useQueryClient();
+  const workingDirFiles = useStore((store) => store.workingDirFiles);
+  const workingDirPath = useStore((store) => store.workingDirPath);
 
-  const { data: currentDirFiles } = useCurrentDirectoryFiles();
-  const { data: currentDir } = useCurrentDirectory();
-  const [dirState, { toggleFolderOpen }] = useDirectoryState(currentDirFiles);
+  const openFile = useStore((store) => store.openFile);
+  const [dirState, { toggleFolderOpen }] = useDirectoryState(workingDirFiles);
 
   const handleOpenFileEditor = async (filePath: string) => {
     toggleFolderOpen(filePath);
@@ -60,13 +55,11 @@ const Sidenav = () => {
 
     const readFile = await fs.readTextFile(filePath);
     if (readFile) {
-      queryClient.setQueryData(QueryKeys.OpenFile, () => {
-        return { contents: readFile, path: filePath };
-      });
+      openFile({ contents: readFile, path: filePath });
     }
   };
 
-  const dirSplit = currentDir?.split("/");
+  const dirSplit = workingDirPath?.split("/");
   const dirTitle = dirSplit?.[dirSplit.length - 1];
 
   return (

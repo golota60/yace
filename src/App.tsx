@@ -1,12 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "react-query";
 import { css } from "@emotion/css";
 import PageWithSidenav from "./generic/PageWithSidenav";
 import NotesPage from "./pages/NotesPage";
 
 function App() {
-  const queryClient = new QueryClient();
-
   return (
     <div
       className={css`
@@ -14,15 +11,13 @@ function App() {
         height: 100vh;
       `}
     >
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <Routes>
-            <Route element={<PageWithSidenav />}>
-              <Route path="/" element={<NotesPage />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
-      </QueryClientProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<PageWithSidenav />}>
+            <Route path="/" element={<NotesPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
