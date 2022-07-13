@@ -1,10 +1,12 @@
+import { javascript } from "@codemirror/lang-javascript";
 import { fs } from "@tauri-apps/api";
 import { open } from "@tauri-apps/api/dialog";
-import clsx from "clsx";
 import React from "react";
-import MonacoEditor from "react-monaco-editor";
+import CodeMirror from "@uiw/react-codemirror";
 import Button from "../generic/Button";
 import { useStore } from "../store";
+import clsx from "clsx";
+import { EditorView } from "@codemirror/view";
 
 const NotesPage = () => {
   const workingDirPath = useStore((store) => store.workingDirPath);
@@ -20,15 +22,19 @@ const NotesPage = () => {
     setWorkingDirPath(filePath);
     setWorkingDirFiles(filesInDirRaw);
   };
+
   return (
     <div className="flex flex-col justify-center items-center">
       {workingDirPath ? (
         openedFile ? (
-          <MonacoEditor
+          <CodeMirror
+            className={clsx("w-full h-screen")}
             value={openedFile?.contents}
-            language="typescript"
-            theme="vs-dark"
-            className={clsx("w-full h-full")}
+            extensions={[
+              javascript({ jsx: true, typescript: true }),
+              EditorView.lineWrapping,
+            ]}
+            theme="dark"
           />
         ) : (
           "Open a file!"
