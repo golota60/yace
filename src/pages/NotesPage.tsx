@@ -3,10 +3,10 @@ import { fs } from "@tauri-apps/api";
 import { open } from "@tauri-apps/api/dialog";
 import React from "react";
 import CodeMirror from "@uiw/react-codemirror";
+import { EditorView } from "@codemirror/view";
+import clsx from "clsx";
 import Button from "../generic/Button";
 import { useStore } from "../store";
-import clsx from "clsx";
-import { EditorView } from "@codemirror/view";
 
 const NotesPage = () => {
   const workingDirPath = useStore((store) => store.workingDirPath);
@@ -28,7 +28,7 @@ const NotesPage = () => {
       {workingDirPath ? (
         openedFile ? (
           <CodeMirror
-            className={clsx("w-full h-screen")}
+            className={clsx("w-full h-screen overflow-y-auto")}
             value={openedFile?.contents}
             extensions={[
               javascript({ jsx: true, typescript: true }),
