@@ -15,8 +15,7 @@
       "all": true,
       "fs": {
         "all": true,
-        "readDir": true,
-        "scope": ["*"]
+        "readDir": true
       },
       "dialog": {
         "all": true,
