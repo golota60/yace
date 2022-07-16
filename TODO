@@ -1,2 +1,3 @@
 - Move away from recursion - it's too slow for operations on directory
 - add icons to all files + special icons for special names
+- figure out a way to sandbox the app - you can't run the app modifying files on root, this can lead to devastating results
